@@ -3,8 +3,11 @@ package dev.be.oneday.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -18,6 +21,8 @@ import java.time.LocalDateTime;
 @Setter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
+@DynamicUpdate
+@DynamicInsert
 public abstract class BaseEntity implements Serializable {
 
     @CreatedDate
@@ -36,6 +41,7 @@ public abstract class BaseEntity implements Serializable {
     @Column(columnDefinition = "varchar(100) COMMENT '수정자'")
     private String modifiedBy;
 
-    @Column(columnDefinition = "bit default false NOT NULL COMMENT '이용가능여부'")
-    private Boolean isDeleted;
+    @Column(columnDefinition = "varchar(1) default 'N' NOT NULL COMMENT '이용가능여부'")
+//    @Column(nullable = false)
+    private Boolean isDeleted=false;
 }
