@@ -1,0 +1,2 @@
+insert into user_account (user_id, password, nickname, email, created_at, created_by, modified_at, modified_by, is_deleted) values
+    ('test', '1234', 'Nickname', 'test@mail.com', now(), 'test', now(), 'test','N');
