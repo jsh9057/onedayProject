@@ -2,6 +2,8 @@ package dev.be.oneday.dto;
 
 import dev.be.oneday.domain.Habit;
 import dev.be.oneday.domain.UserAccount;
+import dev.be.oneday.exception.BaseException;
+import dev.be.oneday.exception.ErrorType;
 import lombok.*;
 
 import java.io.Serializable;
@@ -31,10 +33,11 @@ public class HabitDto implements Serializable {
 
     private Boolean isDeleted;
 
-    public static HabitDto fromEntity(Habit habit){
+    public static HabitDto from(Habit habit){
+        if(habit == null){ throw new BaseException(ErrorType.VALUE_IS_NULL,"habit is null"); }
         return HabitDto.builder()
                 .habitId(habit.getHabitId())
-                .userAccountDto(UserAccountDto.fromEntity(habit.getUserAccount()))
+                .userAccountDto(UserAccountDto.from(habit.getUserAccount()))
                 .title(habit.getTitle())
                 .content(habit.getContent())
                 .createdAt(habit.getCreatedAt())
@@ -46,7 +49,7 @@ public class HabitDto implements Serializable {
     }
 
     public Habit toEntity(UserAccount userAccount){
-        if(userAccount == null) throw new NullPointerException("유저가 null 입니다.");
+        if(userAccount == null) throw new BaseException(ErrorType.VALUE_IS_NULL,"userAccount is null");
         return Habit.builder()
                 .userAccount(userAccount)
                 .title(title)

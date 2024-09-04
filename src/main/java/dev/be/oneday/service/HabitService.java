@@ -28,18 +28,18 @@ public class HabitService {
         if(habitDto.getContent().isBlank()){ throw new BaseException(ErrorType.INVALID_PARAMETER,"content is empty"); }
 
         Habit saved = habitRepository.save(habitDto.toEntity(userAccount));
-        return HabitDto.fromEntity(saved);
+        return HabitDto.from(saved);
     }
 
     @Transactional(readOnly = true)
     public Page<HabitDto> getAllHabits(Pageable pageable){
-        return habitRepository.findAll(pageable).map(HabitDto::fromEntity);
+        return habitRepository.findAll(pageable).map(HabitDto::from);
     }
 
     @Transactional(readOnly = true)
     public HabitDto getHabit(Long habitId){
         return habitRepository.findById(habitId)
-                .map(HabitDto::fromEntity)
+                .map(HabitDto::from)
                 .orElseThrow(()->new BaseException(ErrorType.HABIT_NOT_FOUND,"habitId:"+habitId));
     }
 
@@ -64,9 +64,9 @@ public class HabitService {
             habit.setTitle(habitDto.getTitle());
             habit.setContent(habitDto.getContent());
             habitRepository.save(habit);
-            return HabitDto.fromEntity(habit);
+            return HabitDto.from(habit);
         }
         // TODO: 수정자와 작성자가 다를 경우 수정없이 원본을 넘기지만, 정상적 처리인지 아닌지 response 를 만들어 구분하는게 좋아보임.
-        return HabitDto.fromEntity(habit);
+        return HabitDto.from(habit);
     }
 }

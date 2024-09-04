@@ -1,5 +1,7 @@
 package dev.be.oneday.domain;
 
+import dev.be.oneday.exception.BaseException;
+import dev.be.oneday.exception.ErrorType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
@@ -25,4 +27,13 @@ public class HabitJoin extends BaseEntity{
     private UserAccount userAccount;
     @ManyToOne(optional = false)@JoinColumn(name = "habitId", columnDefinition = "bigint COMMENT '습관 id'")
     private Habit habit;
+
+    public static HabitJoin of(UserAccount userAccount, Habit habit){
+        if(userAccount==null){ throw new BaseException(ErrorType.USER_NOT_FOUND,"userAccount is null"); }
+        if(habit == null){ throw new BaseException(ErrorType.HABIT_NOT_FOUND,"habit is null"); }
+        return HabitJoin.builder()
+                .userAccount(userAccount)
+                .habit(habit)
+                .build();
+    }
 }

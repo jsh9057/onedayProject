@@ -18,12 +18,12 @@ public class UserAccountService {
 
     public UserAccountDto create(UserAccountDto userAccountDto){
         UserAccount saved = userAccountRepository.save(userAccountDto.toEntity());
-        return UserAccountDto.fromEntity(saved);
+        return UserAccountDto.from(saved);
     }
 
     public UserAccountDto getUserAccount(Long userAccountId){
         UserAccount userAccount = userAccountRepository.findById(userAccountId)
                 .orElseThrow(()-> new BaseException(ErrorType.USER_NOT_FOUND,"userAccountId:"+userAccountId));
-        return UserAccountDto.fromEntity(userAccount);
+        return UserAccountDto.from(userAccount);
     }
 }

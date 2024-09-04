@@ -35,7 +35,7 @@ class UserAccountServiceTest {
                 .nickname("nick")
                 .email("email@abc.com")
                 .build();
-        UserAccountDto userAccountDto = UserAccountDto.fromEntity(userAccount);
+        UserAccountDto userAccountDto = UserAccountDto.from(userAccount);
 
         given(userAccountRepository.save(ArgumentMatchers.any(UserAccount.class))).willReturn(userAccount);
 

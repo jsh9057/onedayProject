@@ -1,5 +1,7 @@
 package dev.be.oneday.domain;
 
+import dev.be.oneday.exception.BaseException;
+import dev.be.oneday.exception.ErrorType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
@@ -32,5 +34,13 @@ public class HabitCheck extends BaseEntity{
 //    @Column(nullable = false)@ColumnDefault("'Y'")
     private Boolean isYn=true;
 
-
+    public static HabitCheck of(UserAccount userAccount, Habit habit, Boolean isYn){
+        if(userAccount == null) throw new BaseException(ErrorType.USER_NOT_FOUND,"userAccount is null");
+        if(habit == null) throw new BaseException(ErrorType.HABIT_NOT_FOUND,"habit is null");
+        return HabitCheck.builder()
+                .userAccount(userAccount)
+                .habit(habit)
+                .isYn(isYn)
+                .build();
+    }
 }

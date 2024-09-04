@@ -1,6 +1,8 @@
 package dev.be.oneday.dto;
 
 import dev.be.oneday.domain.UserAccount;
+import dev.be.oneday.exception.BaseException;
+import dev.be.oneday.exception.ErrorType;
 import lombok.*;
 
 import java.io.Serializable;
@@ -33,7 +35,8 @@ public class UserAccountDto implements Serializable {
 
     private Boolean isDeleted;
 
-    public static UserAccountDto fromEntity(UserAccount userAccount) {
+    public static UserAccountDto from(UserAccount userAccount) {
+        if(userAccount == null){ throw new BaseException(ErrorType.VALUE_IS_NULL,"userAccount is null"); }
         return UserAccountDto.builder()
                 .userAccountId(userAccount.getUserAccountId())
                 .userId(userAccount.getUserId())

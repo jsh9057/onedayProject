@@ -52,7 +52,7 @@ class HabitServiceTest {
                 .title("testTitle")
                 .content("testContents")
                 .build();
-        HabitDto habitDto = HabitDto.fromEntity(habit);
+        HabitDto habitDto = HabitDto.from(habit);
         given(userAccountRepository.findById(1L)).willReturn(Optional.ofNullable(user));
         given(habitRepository.save(ArgumentMatchers.any(Habit.class))).willReturn(habit);
 
@@ -78,7 +78,7 @@ class HabitServiceTest {
                 .title(" ")
                 .content(" ")
                 .build();
-        HabitDto habitDto = HabitDto.fromEntity(habit);
+        HabitDto habitDto = HabitDto.from(habit);
         given(userAccountRepository.findById(1L)).willReturn(Optional.ofNullable(user));
 
         // when
@@ -213,7 +213,7 @@ class HabitServiceTest {
                 .build();
         HabitDto updateHabitDto = HabitDto.builder()
                 .habitId(habitId)
-                .userAccountDto(UserAccountDto.fromEntity(userAccount))
+                .userAccountDto(UserAccountDto.from(userAccount))
                 .title("updateTitle")
                 .content("updateContents")
                 .build();
@@ -304,7 +304,7 @@ class HabitServiceTest {
                 .content("content")
                 .build();
         HabitDto blinkHabit = HabitDto.builder()
-                .userAccountDto(UserAccountDto.fromEntity(userAccount))
+                .userAccountDto(UserAccountDto.from(userAccount))
                 .title(" ")
                 .content("")
                 .build();
