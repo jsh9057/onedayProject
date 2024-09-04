@@ -2,6 +2,7 @@ package dev.be.oneday.controller;
 
 import dev.be.oneday.dto.HabitDto;
 import dev.be.oneday.dto.Request.HabitRequest;
+import dev.be.oneday.dto.Response.HabitResponse;
 import dev.be.oneday.dto.UserAccountDto;
 import dev.be.oneday.service.HabitService;
 import dev.be.oneday.service.UserAccountService;
@@ -25,19 +26,21 @@ public class HabitController {
     private final UserAccountService userAccountService;
 
     @GetMapping
-    public ResponseEntity<Page<HabitDto>> getAll(
+    public ResponseEntity<Page<HabitResponse>> getAll(
             @PageableDefault(size = 20, sort="createdAt", direction = Sort.Direction.DESC)Pageable pageable
     ){
-        return ResponseEntity.ok(habitService.getAllHabits(pageable));
+        Page<HabitResponse> habitResponses = habitService.getAllHabits(pageable).map(HabitResponse::from);
+        return ResponseEntity.ok(habitResponses);
     }
 
     @GetMapping("{habitId}")
-    public ResponseEntity<HabitDto> get(@PathVariable Long habitId){
-        return ResponseEntity.ok(habitService.getHabit(habitId));
+    public ResponseEntity<HabitResponse> get(@PathVariable Long habitId){
+        HabitResponse habitResponse = HabitResponse.from(habitService.getHabit(habitId));
+        return ResponseEntity.ok(habitResponse);
     }
 
     @PostMapping
-    public ResponseEntity<HabitDto> create(
+    public ResponseEntity<HabitResponse> create(
             @RequestBody HabitRequest habitRequest
     ){
         // TODO: 추후 삭제
@@ -48,11 +51,12 @@ public class HabitController {
                 .nickname("Nickname")
                 .email("test@email.com")
                 .build();
-        return ResponseEntity.status(HttpStatus.CREATED).body(habitService.create(habitRequest.toDto(tempUser)));
+        HabitResponse habitResponse = HabitResponse.from(habitService.create(habitRequest.toDto(tempUser)));
+        return ResponseEntity.status(HttpStatus.CREATED).body(habitResponse);
     }
 
     @PutMapping("{habitId}")
-    public ResponseEntity<HabitDto> update(
+    public ResponseEntity<HabitResponse> update(
             @PathVariable Long habitId,
             @RequestBody HabitRequest habitRequest
     ){
@@ -64,7 +68,8 @@ public class HabitController {
                 .nickname("Nickname")
                 .email("test@email.com")
                 .build();
-        return ResponseEntity.ok(habitService.update(habitId,habitRequest.toDto(tempUser)));
+        HabitResponse habitResponse = HabitResponse.from(habitService.update(habitId,habitRequest.toDto(tempUser)));
+        return ResponseEntity.ok(habitResponse);
     }
 
     @DeleteMapping("{habitId}")

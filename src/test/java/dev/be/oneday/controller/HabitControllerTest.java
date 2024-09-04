@@ -55,6 +55,9 @@ class HabitControllerTest {
         Long habitId = 1L;
         HabitDto habitDto = HabitDto.builder()
                 .habitId(habitId)
+                .userAccountDto(UserAccountDto.builder()
+                        .nickname("testNickname")
+                        .build())
                 .title("testTitle")
                 .content("testContent")
                 .build();
