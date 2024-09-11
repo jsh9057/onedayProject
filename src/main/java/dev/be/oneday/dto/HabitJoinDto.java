@@ -18,7 +18,7 @@ public class HabitJoinDto implements Serializable {
 
     private UserAccountDto userAccountDto;
 
-    private Long habitId;
+    private HabitDto habitDto;
 
     private LocalDateTime createdAt;
 
@@ -35,7 +35,7 @@ public class HabitJoinDto implements Serializable {
         return HabitJoinDto.builder()
                 .habitJoinId(habitJoin.getHabitJoinId())
                 .userAccountDto(UserAccountDto.from(habitJoin.getUserAccount()))
-                .habitId(habitJoin.getHabit().getHabitId())
+                .habitDto(HabitDto.from(habitJoin.getHabit()))
                 .createdAt(habitJoin.getCreatedAt())
                 .createdBy(habitJoin.getCreatedBy())
                 .modifiedAt(habitJoin.getModifiedAt())
