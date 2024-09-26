@@ -16,9 +16,13 @@ public class GlobalExceptionHandler extends RuntimeException{
         ErrorType errorType = ex.getErrorType();
         ErrorResponse errorResponse = new ErrorResponse(errorType);
         log.error(String.format("[%s] %s - detail: %s", errorType.getCode(), errorType.getMessage(),ex.getDetails()));
-        if(errorType.getHttpStatus() == HttpStatus.INTERNAL_SERVER_ERROR){
-            ex.printStackTrace();
-        }
         return ResponseEntity.status(errorType.getHttpStatus()).body(errorResponse);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    protected ResponseEntity<Object> baseException(Exception ex) {
+        log.error(String.format("[%s] %s - detail: %s", HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage(), ex.toString()));
+        ErrorResponse errorResponse = new ErrorResponse(ErrorType.INTERNAL_SERVER_ERROR);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
 }
