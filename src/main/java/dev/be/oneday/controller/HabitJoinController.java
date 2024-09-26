@@ -3,7 +3,6 @@ package dev.be.oneday.controller;
 import dev.be.oneday.dto.Response.HabitJoinResponse;
 import dev.be.oneday.dto.UserAccountDto;
 import dev.be.oneday.service.HabitJoinService;
-import dev.be.oneday.service.HabitService;
 import dev.be.oneday.service.UserAccountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -11,10 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 @RequiredArgsConstructor
@@ -36,7 +32,7 @@ public class HabitJoinController {
                 .nickname("Nickname")
                 .email("test@email.com")
                 .build();
-        habitJoinService.joinHabit(habitId,tempUser);
+        habitJoinService.create(habitId,tempUser);
         return ResponseEntity.ok().build();
     }
 
@@ -47,6 +43,22 @@ public class HabitJoinController {
     ){
         Page<HabitJoinResponse> habitJoinResponses = habitJoinService.getHabitUsers(habitId, pageable).map(HabitJoinResponse::from);
         return ResponseEntity.ok(habitJoinResponses);
+    }
+
+    @DeleteMapping("/habits/{habitId}/habit-join")
+    public ResponseEntity<Void> deleteHabitJoin(
+            @PathVariable Long habitId
+    ){
+        // TODO: 추후 삭제
+        UserAccountDto tempUser = UserAccountDto.builder()
+                .userAccountId(1L)
+                .userId("test")
+                .password("1234")
+                .nickname("Nickname")
+                .email("test@email.com")
+                .build();
+        habitJoinService.delete(habitId,tempUser);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/mypage/habit-join")

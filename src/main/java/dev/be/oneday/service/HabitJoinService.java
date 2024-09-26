@@ -14,14 +14,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class HabitJoinService {
     private final HabitJoinRepository habitJoinRepository;
     private final UserAccountRepository userAccountRepository;
     private final HabitRepository habitRepository;
-    public void joinHabit(Long habitId, UserAccountDto userAccountDto){
+
+    public void create(Long habitId, UserAccountDto userAccountDto){
         Long userAccountId = userAccountDto.getUserAccountId();
         UserAccount userAccount = userAccountRepository.findById(userAccountId)
                 .orElseThrow(() -> new BaseException(ErrorType.USER_NOT_FOUND,"userAccountId:"+userAccountId));
@@ -31,13 +34,11 @@ public class HabitJoinService {
         if(habitJoinRepository.findByHabit_HabitIdAndUserAccount_UserAccountId(habitId, userAccountId).isPresent()){
             throw new BaseException(ErrorType.ALREADY_JOINED_HABIT);
         }
-        else{
-            HabitJoin habitJoin = HabitJoin.of(userAccount,habit);
-            habitJoinRepository.save(habitJoin);
-        }
+        HabitJoin habitJoin = HabitJoin.of(userAccount,habit);
+        habitJoinRepository.save(habitJoin);
     }
 
-
+    @Transactional(readOnly = true)
     public Page<HabitJoinDto> getHabitUsers(Long habitId, Pageable pageable){
         if(habitRepository.findById(habitId).isEmpty()){
             throw new BaseException(ErrorType.HABIT_NOT_FOUND,"habitId:"+habitId);
@@ -45,10 +46,18 @@ public class HabitJoinService {
         return habitJoinRepository.findByHabit_HabitId(habitId, pageable).map(HabitJoinDto::from);
     }
 
+    @Transactional(readOnly = true)
     public Page<HabitJoinDto> getUserHabits(UserAccountDto userAccountDto, Pageable pageable){
         if(userAccountRepository.findById(userAccountDto.getUserAccountId()).isEmpty()){
             throw new BaseException(ErrorType.USER_NOT_FOUND,"userAccountId:"+userAccountDto.getUserAccountId());
         }
         return habitJoinRepository.findByUserAccount_UserAccountId(userAccountDto.getUserAccountId(), pageable).map(HabitJoinDto::from);
+    }
+
+    public void delete(Long habitId, UserAccountDto userAccountDto){
+        HabitJoin habitJoin = habitJoinRepository.findByHabit_HabitIdAndUserAccount_UserAccountId(habitId, userAccountDto.getUserAccountId())
+                .orElseThrow(()-> new BaseException(ErrorType.NOT_JOINED_HABIT, String.format("habitId:%d userAccountId:%d",habitId,userAccountDto.getUserAccountId())));
+        habitJoin.setIsDeleted(true);
+        habitJoinRepository.save(habitJoin);
     }
 }

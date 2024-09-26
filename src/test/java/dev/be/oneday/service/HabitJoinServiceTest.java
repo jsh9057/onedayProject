@@ -64,7 +64,7 @@ class HabitJoinServiceTest {
         given(habitJoinRepository.save(any(HabitJoin.class))).willReturn(habitJoin);
 
         // when
-        habitJoinService.joinHabit(habitId,userAccountDto);
+        habitJoinService.create(habitId,userAccountDto);
 
         // then
         then(userAccountRepository).should().findById(userAccountId);
@@ -95,7 +95,7 @@ class HabitJoinServiceTest {
         given(habitJoinRepository.findByHabit_HabitIdAndUserAccount_UserAccountId(habitId,userAccountId)).willReturn(Optional.of(habitJoin));
 
         // when
-        Throwable t = catchThrowable(() -> habitJoinService.joinHabit(habitId, userAccountDto));
+        Throwable t = catchThrowable(() -> habitJoinService.create(habitId, userAccountDto));
 
         // then
         assertThat(t)
@@ -146,5 +146,27 @@ class HabitJoinServiceTest {
         assertThat(userHabits).isEqualTo(Page.empty());
         then(habitRepository).should().findById(habitId);
         then(habitJoinRepository).should().findByHabit_HabitId(habitId,pageable);
+    }
+
+    @DisplayName("습관아이디와 유저정보로, 습관 참여여부를 삭제한다.")
+    @Test
+    void givenHabitIdAndUserInfo_whenDelete_thenDeletesHabitJoined(){
+        // given
+        UserAccountDto userAccountDto = UserAccountDto.builder()
+                .userAccountId(1L)
+                .build();
+        Long habitId = 2L;
+        HabitJoin habitJoin = HabitJoin.builder()
+                .habitJoinId(3L)
+                .build();
+        given(habitJoinRepository.findByHabit_HabitIdAndUserAccount_UserAccountId(habitId,userAccountDto.getUserAccountId())).willReturn(Optional.of(habitJoin));
+
+        // when
+        habitJoinService.delete(habitId,userAccountDto);
+
+        // then
+        assertThat(habitJoin.getIsDeleted()).isTrue();
+        then(habitJoinRepository).should().findByHabit_HabitIdAndUserAccount_UserAccountId(habitId,userAccountDto.getUserAccountId());
+        then(habitJoinRepository).should().save(habitJoin);
     }
 }
