@@ -45,7 +45,7 @@ class HabitJoinControllerTest {
     void givenHabitIdAndUserInfo_whenJoin_thenJoinHabit() throws Exception{
         // given
         Long habitId = 1L;
-        willDoNothing().given(habitJoinService).joinHabit(any(Long.class),any(UserAccountDto.class));
+        willDoNothing().given(habitJoinService).create(any(Long.class),any(UserAccountDto.class));
 
         // when & then
         mvc.perform(post("/habits/"+habitId+"/habit-join"))
