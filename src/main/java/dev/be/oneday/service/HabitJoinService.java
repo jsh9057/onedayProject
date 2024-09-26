@@ -55,6 +55,8 @@ public class HabitJoinService {
     }
 
     public void delete(Long habitId, UserAccountDto userAccountDto){
+        habitRepository.findById(habitId)
+                .orElseThrow(() -> new BaseException(ErrorType.HABIT_NOT_FOUND, "habitId:"+habitId));
         HabitJoin habitJoin = habitJoinRepository.findByHabit_HabitIdAndUserAccount_UserAccountId(habitId, userAccountDto.getUserAccountId())
                 .orElseThrow(()-> new BaseException(ErrorType.NOT_JOINED_HABIT, String.format("habitId:%d userAccountId:%d",habitId,userAccountDto.getUserAccountId())));
         habitJoin.setIsDeleted(true);
