@@ -43,4 +43,21 @@ public class HabitCheckDto implements Serializable {
                 .isYn(isYn)
                 .build();
     }
+
+    public static HabitCheckDto from(HabitCheck habitCheck){
+        if(habitCheck==null){
+            throw new BaseException(ErrorType.VALUE_IS_NULL, "habitCheck is null");
+        }
+        return HabitCheckDto.builder()
+                .habitCheckId(habitCheck.getHabitCheckId())
+                .userAccountDto(UserAccountDto.from(habitCheck.getUserAccount()))
+                .habitDto(HabitDto.from(habitCheck.getHabit()))
+                .isYn(habitCheck.getIsYn())
+                .createdAt(habitCheck.getCreatedAt())
+                .createdBy(habitCheck.getCreatedBy())
+                .modifiedAt(habitCheck.getModifiedAt())
+                .modifiedBy(habitCheck.getModifiedBy())
+                .isDeleted(habitCheck.getIsDeleted())
+                .build();
+    }
 }
