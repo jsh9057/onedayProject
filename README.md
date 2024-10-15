@@ -88,6 +88,7 @@
 
 - @Transactionl 동작 방식때문에 생긴 문제
 - 새로운 외부 클래스 keyword service 로 분리
+---
 
 ### **Propagation.REQUIRES_NEW**
 
