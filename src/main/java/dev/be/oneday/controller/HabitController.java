@@ -1,10 +1,13 @@
 package dev.be.oneday.controller;
 
+import dev.be.oneday.domain.Keyword;
 import dev.be.oneday.dto.HabitDto;
 import dev.be.oneday.dto.Request.HabitRequest;
 import dev.be.oneday.dto.Response.HabitResponse;
+import dev.be.oneday.dto.Response.KeywordResponse;
 import dev.be.oneday.dto.UserAccountDto;
 import dev.be.oneday.service.HabitService;
+import dev.be.oneday.service.KeywordService;
 import dev.be.oneday.service.UserAccountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +19,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Objects;
+
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/habits")
@@ -23,13 +29,21 @@ import org.springframework.web.bind.annotation.*;
 public class HabitController {
 
     private final HabitService habitService;
+    private final KeywordService keywordService;
     private final UserAccountService userAccountService;
 
     @GetMapping
     public ResponseEntity<Page<HabitResponse>> getAll(
+            @RequestParam(required = false) String title,
             @PageableDefault(size = 20, sort="createdAt", direction = Sort.Direction.DESC)Pageable pageable
     ){
-        Page<HabitResponse> habitResponses = habitService.getAllHabits(pageable).map(HabitResponse::from);
+        Page<HabitResponse> habitResponses;
+        if(title == null || title.isBlank()){
+            habitResponses = habitService.getAllHabits(pageable).map(HabitResponse::from);
+        }
+        else{
+            habitResponses = keywordService.searchForKeyword(title,pageable).map(HabitResponse::from);
+        }
         return ResponseEntity.ok(habitResponses);
     }
 
@@ -39,36 +53,54 @@ public class HabitController {
         return ResponseEntity.ok(habitResponse);
     }
 
+//    @GetMapping
+//    public ResponseEntity<Page<HabitResponse>> searchByTitle(
+//            @RequestParam(required = true) String title,
+//            @PageableDefault(size = 20, sort="createdAt", direction = Sort.Direction.DESC)Pageable pageable
+//    ){
+//        Page<HabitResponse> habitResponses = keywordService.searchForKeyword(title,pageable).map(HabitResponse::from);
+//        return ResponseEntity.ok(habitResponses);
+//
+//    }
+
+
     @PostMapping
     public ResponseEntity<HabitResponse> create(
+            @RequestParam(defaultValue = "1") Long userAccountId,
             @RequestBody HabitRequest habitRequest
     ){
         // TODO: 추후 삭제
         UserAccountDto tempUser = UserAccountDto.builder()
-                .userAccountId(1L)
+                .userAccountId(userAccountId)
                 .userId("test")
                 .password("1234")
                 .nickname("Nickname")
                 .email("test@email.com")
                 .build();
-        HabitResponse habitResponse = HabitResponse.from(habitService.create(habitRequest.toDto(tempUser)));
+        HabitDto habitDto = habitService.create(habitRequest.toDto(tempUser));
+        HabitResponse habitResponse = HabitResponse.from(habitDto);
+//        keywordService.create(habitDto);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(habitResponse);
     }
 
     @PutMapping("{habitId}")
     public ResponseEntity<HabitResponse> update(
             @PathVariable Long habitId,
+            @RequestParam(defaultValue = "1") Long userAccountId,
             @RequestBody HabitRequest habitRequest
     ){
         // TODO: 추후 삭제
         UserAccountDto tempUser = UserAccountDto.builder()
-                .userAccountId(1L)
+                .userAccountId(userAccountId)
                 .userId("test")
                 .password("1234")
                 .nickname("Nickname")
                 .email("test@email.com")
                 .build();
+
         HabitResponse habitResponse = HabitResponse.from(habitService.update(habitId,habitRequest.toDto(tempUser)));
+
         return ResponseEntity.ok(habitResponse);
     }
 
@@ -76,5 +108,10 @@ public class HabitController {
     public ResponseEntity<Void> delete(@PathVariable Long habitId){
         habitService.delete(habitId);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/keywords")
+    public ResponseEntity<List<KeywordResponse>> findAllKeyword(){
+        return ResponseEntity.ok(keywordService.findAllKeyword().stream().map(KeywordResponse::from).toList());
     }
 }

@@ -21,12 +21,12 @@ public class HabitJoinController {
 
     @PostMapping("/habits/{habitId}/habit-join")
     public ResponseEntity<Void> joinHabit(
-            @PathVariable Long habitId
-//            @RequestBody HabitJoinRequest habitJoinRequest
+            @PathVariable Long habitId,
+            @RequestParam(defaultValue = "1") Long userAccountId
 
     ){
         UserAccountDto tempUser = UserAccountDto.builder()
-                .userAccountId(1L)
+                .userAccountId(userAccountId)
                 .userId("test")
                 .password("1234")
                 .nickname("Nickname")
@@ -47,11 +47,12 @@ public class HabitJoinController {
 
     @DeleteMapping("/habits/{habitId}/habit-join")
     public ResponseEntity<Void> deleteHabitJoin(
-            @PathVariable Long habitId
+            @PathVariable Long habitId,
+            @RequestParam(defaultValue = "1") Long userAccountId
     ){
         // TODO: 추후 삭제
         UserAccountDto tempUser = UserAccountDto.builder()
-                .userAccountId(1L)
+                .userAccountId(userAccountId)
                 .userId("test")
                 .password("1234")
                 .nickname("Nickname")
@@ -63,10 +64,11 @@ public class HabitJoinController {
 
     @GetMapping("/mypage/habit-join")
     public ResponseEntity<Page<HabitJoinResponse>> getMyHabits(
-            @PageableDefault(size = 5, sort = "createdAt", direction = Sort.Direction.DESC)Pageable pageable
+            @PageableDefault(size = 5, sort = "createdAt", direction = Sort.Direction.DESC)Pageable pageable,
+            @RequestParam(defaultValue = "1") Long userAccountId
     ){
         UserAccountDto tempUser = UserAccountDto.builder()
-                .userAccountId(1L)
+                .userAccountId(userAccountId)
                 .userId("test")
                 .password("1234")
                 .nickname("Nickname")

@@ -15,6 +15,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -37,6 +38,9 @@ class HabitServiceTest {
     private HabitRepository habitRepository;
     @Mock
     private UserAccountRepository userAccountRepository;
+
+    @SpyBean
+    private KeywordService keywordService;
 
     @DisplayName("실천할 습관를 생성하면, 생성된 습관을 반환한다.")
     @Test
