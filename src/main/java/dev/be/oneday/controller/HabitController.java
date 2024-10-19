@@ -1,12 +1,12 @@
 package dev.be.oneday.controller;
 
-import dev.be.oneday.domain.Keyword;
+import dev.be.oneday.domain.KeywordMongo;
 import dev.be.oneday.dto.HabitDto;
 import dev.be.oneday.dto.Request.HabitRequest;
 import dev.be.oneday.dto.Response.HabitResponse;
-import dev.be.oneday.dto.Response.KeywordResponse;
 import dev.be.oneday.dto.UserAccountDto;
 import dev.be.oneday.service.HabitService;
+import dev.be.oneday.service.KeywordMongoService;
 import dev.be.oneday.service.KeywordService;
 import dev.be.oneday.service.UserAccountService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,7 +28,7 @@ import java.util.Objects;
 public class HabitController {
 
     private final HabitService habitService;
-    private final KeywordService keywordService;
+    private final KeywordMongoService keywordMongoService;
     private final UserAccountService userAccountService;
 
     @GetMapping
@@ -42,7 +41,9 @@ public class HabitController {
             habitResponses = habitService.getAllHabits(pageable).map(HabitResponse::from);
         }
         else{
-            habitResponses = keywordService.searchForKeyword(title,pageable).map(HabitResponse::from);
+//            habitResponses = keywordService.searchForKeyword(title,pageable).map(HabitResponse::from);
+            habitResponses = keywordMongoService.searchForKeyword(title, pageable).map(HabitResponse::from);
+
         }
         return ResponseEntity.ok(habitResponses);
     }
@@ -111,7 +112,8 @@ public class HabitController {
     }
 
     @GetMapping("/keywords")
-    public ResponseEntity<List<KeywordResponse>> findAllKeyword(){
-        return ResponseEntity.ok(keywordService.findAllKeyword().stream().map(KeywordResponse::from).toList());
+    public ResponseEntity<List<KeywordMongo>> findAllKeyword(){
+        return ResponseEntity.ok(keywordMongoService.findAllKeyword());
+//        return ResponseEntity.ok(keywordService.findAllKeyword().stream().map(KeywordResponse::from).toList());
     }
 }

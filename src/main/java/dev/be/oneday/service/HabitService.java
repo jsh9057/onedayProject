@@ -7,7 +7,6 @@ import dev.be.oneday.exception.BaseException;
 import dev.be.oneday.exception.ErrorType;
 import dev.be.oneday.repository.HabitRepository;
 import dev.be.oneday.repository.UserAccountRepository;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,7 +22,9 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 public class HabitService {
     private final HabitRepository habitRepository;
     private final UserAccountRepository userAccountRepository;
-    private final KeywordService keywordService;
+//    private final KeywordService keywordService;
+    private final KeywordMongoService keywordMongoService;
+
     public HabitDto create(HabitDto habitDto){
         log.info("TransactionName:"+TransactionSynchronizationManager.getCurrentTransactionName());
         UserAccount userAccount = userAccountRepository.findById(habitDto.getUserAccountDto().getUserAccountId())
@@ -34,9 +35,10 @@ public class HabitService {
 
         Habit saved = habitRepository.save(habitDto.toEntity(userAccount));
         try {
-            keywordService.create(HabitDto.from(saved));
-        }catch (BaseException e){
-            log.warn("[{}] fail create keyword  habitId:{}",e.getErrorType(),saved.getHabitId());
+            keywordMongoService.analysisAndSave(habitDto.getTitle(), saved.getHabitId());
+        }catch (Exception e){
+            e.printStackTrace();
+            log.warn("fail create keyword  habitId:{}",saved.getHabitId());
 
         }
         return HabitDto.from(saved);
@@ -58,7 +60,7 @@ public class HabitService {
         Habit habit = habitRepository.findById(habitId)
                 .orElseThrow(()->new BaseException(ErrorType.HABIT_NOT_FOUND,"habitId:"+habitId));
         habit.setIsDeleted(true);
-        keywordService.deleteHabitKeyword(habitId);
+        keywordMongoService.analysisAndDelete(habit.getTitle(), habitId);
         habitRepository.save(habit);
     }
 
@@ -75,7 +77,7 @@ public class HabitService {
 
             if(!habit.getTitle().equals(habitDto.getTitle())){
                 try {
-                    keywordService.updateKeyword(habitId,habit.getTitle(),habitDto.getTitle());
+                    keywordMongoService.analysisAndUpdate(habit.getTitle(),habitDto.getTitle(), habitId);
                 }
                 catch (Exception e){
                     throw new BaseException(ErrorType.INTERNAL_SERVER_ERROR,"keyword update 실패");

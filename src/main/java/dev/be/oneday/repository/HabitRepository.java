@@ -8,10 +8,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Set;
 
 @Repository
 public interface HabitRepository extends JpaRepository<Habit,Long> {
-    @Query("select h from Habit h where h.habitId in :habitIds")
+    @Query("select h from Habit h where h.habitId in :habitIds order by h.habitId DESC")
     Page<Habit> findHabitIds(List<Long> habitIds, Pageable pageable);
 }
