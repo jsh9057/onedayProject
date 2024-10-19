@@ -1,4 +1,9 @@
 spring:
+  data:
+    mongodb:
+
+      uri: mongodb://localhost:27017/oneday
+
   main:
     allow-bean-definition-overriding: true
   datasource:
@@ -15,8 +20,6 @@ spring:
       hibernate.default_batch_fetch_size: 100
   sql.init.mode: always
 
-
-
   output:
     ansi:
       enabled: always
@@ -24,4 +27,7 @@ logging:
   level:
     org.springframework.orm.jpa: DEBUG
     org.springframework.transaction: DEBUG
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+
+mongodb.connectionString: mongodb://localhost:27017/oneday
 
