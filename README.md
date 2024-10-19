@@ -33,8 +33,8 @@
 
 - Spring Boot
 - Spring Data JPA
-- MySQL
 - H2 Database
+- MongoDB
 - Lombok
 - KOMORAN
 
