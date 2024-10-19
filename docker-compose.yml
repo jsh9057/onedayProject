@@ -1,0 +1,19 @@
+version: "3.8"                                          # 파일 규격 버전
+services:                                               # 이 항목 밑에 실행하려는 컨테이너들을 정의
+  oneday-mongodb:                        # 서비스명
+    container_name: oneday-mongodb      # 컨테이너 명
+    build:
+      dockerfile: Dockerfile
+      context: ./mongodb
+    image: mongo
+    ports:
+      - "27017:27017"
+  oneday-app:
+    container_name: oneday-app
+    build: .
+    depends_on:
+      - oneday-mongodb
+    image: application-oneday
+    ports:
+      - "80:8080"
+    restart: always
