@@ -22,6 +22,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 public class HabitService {
     private final HabitRepository habitRepository;
     private final UserAccountRepository userAccountRepository;
+    private final EmailNotifier emailNotifier;
 //    private final KeywordService keywordService;
     private final KeywordMongoService keywordMongoService;
 

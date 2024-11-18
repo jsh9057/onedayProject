@@ -40,8 +40,8 @@ public class KeywordMongoService {
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void analysisAndSave(String title, Long habitId){
         TransactionStatus transactionStatus = TransactionAspectSupport.currentTransactionStatus();
-        log.info("isNewTransaction: "+transactionStatus.isNewTransaction());
-        log.info("TransactionName:"+ TransactionSynchronizationManager.getCurrentTransactionName());
+        log.debug("isNewTransaction: "+transactionStatus.isNewTransaction());
+        log.debug("TransactionName:"+ TransactionSynchronizationManager.getCurrentTransactionName());
 
         HashSet<String> nonDuplication = new HashSet<>(wordAnalysisService.doWordNouns(title));
         for (String keyword :nonDuplication){
@@ -87,7 +87,7 @@ public class KeywordMongoService {
         query.addCriteria(criteria);
 
         List<Long> result = mongoTemplate.findDistinct(query,HABIT_IDS, KeywordMongo.class,Long.class);
-        log.info("{}",result);
+        log.debug("{}",result);
 
         Page<HabitDto> pageHabitDto = new PageImpl<>(habitRepository.findHabitIds(result,pageable).stream().map(HabitDto::from).collect(Collectors.toList()));
         return pageHabitDto;

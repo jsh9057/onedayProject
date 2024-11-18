@@ -7,7 +7,6 @@ import dev.be.oneday.dto.Response.HabitResponse;
 import dev.be.oneday.dto.UserAccountDto;
 import dev.be.oneday.service.HabitService;
 import dev.be.oneday.service.KeywordMongoService;
-import dev.be.oneday.service.KeywordService;
 import dev.be.oneday.service.UserAccountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +45,8 @@ public class HabitController {
             habitResponses = keywordMongoService.searchForKeyword(title, pageable).map(HabitResponse::from);
 
         }
-        return ResponseEntity.ok(habitResponses);
+
+        return ResponseEntity.ok().header("content-type","application/json; charset=UTF-8").body(habitResponses);
     }
 
     @GetMapping("{habitId}")

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+    <Properties>
+        <Property name="logPath">./logs</Property>
+        <Property name="logPattern">%style{%d{yyyy/MM/dd HH:mm:ss}}{cyan} %highlight{[%-5p]}{FATAL=bg_red, ERROR=red,
+            INFO=green, DEBUG=blue}  [%C] %style{[%t]}{yellow}- %m%n</Property>
+        <Property name="fileLogPattern">
+            [%-5level] %d{yyyy-MM-dd HH:mm:ss} [%t] %c{1} - %msg%n
+        </Property>
+        <Property name="serviceName">OneDayApplication</Property>
+    </Properties>
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${logPattern}"/>
+        </Console>
+        <RollingFile
+                name="file"
+                append="true"
+                fileName="${logPath}/${serviceName}.log"
+                filePattern="${logPath}/old-logs/${serviceName}_%d{yyyy-MM-dd HH:mm}.%i.log">
+            <PatternLayout pattern="${fileLogPattern}"/>
+            <Policies>
+<!--                <SizeBasedTriggeringPolicy size="5MB"/>-->
+                <TimeBasedTriggeringPolicy type="MINUTES" interval = "10" modulate = "true" />
+            </Policies>
+            <DefaultRolloverStrategy max="500" fileIndex="min" />
+        </RollingFile>
+        <RollingFile
+                name ="RollingFileError"
+                append="true"
+                fileName="${logPath}/${serviceName}_error.log"
+                filePattern="${logPath}/old-error-log/${serviceName}_error_%d{yyyy-MM-dd HH:mm}.%i.log">
+            <PatternLayout pattern="${fileLogPattern}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy type="MINUTES" interval = "10" modulate = "true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="500" fileIndex="min" />
+        </RollingFile>
+
+    </Appenders>
+    <Loggers>
+        <root additivity="false" level="OFF">
+            <AppenderRef ref="console"/>
+        </root>
+
+        <Logger name="org.springframework" level="INFO" additivity="false">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="file"/>
+            <AppenderRef ref="RollingFileError" level="ERROR"/>
+        </Logger>
+        <Logger name="dev.be" level="DEBUG" additivity="false">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="file"/>
+            <AppenderRef ref="RollingFileError" level="ERROR"/>
+        </Logger>
+
+    </Loggers>
+</Configuration>

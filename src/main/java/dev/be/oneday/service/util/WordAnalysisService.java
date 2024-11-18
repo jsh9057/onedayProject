@@ -22,22 +22,22 @@ public class WordAnalysisService {
     // 메모리에 올리간 객체만 불러와서 사용할 수 있기 때문에 처리 속도가 빠릅니다.
     public WordAnalysisService() {
 
-        log.info(this.getClass().getName() + ".WordAnalysisService creator Start !");
+        log.debug(this.getClass().getName() + ".WordAnalysisService creator Start !");
 
         //NLP 분석 객체 메모리 로딩합니다.
         this.nlp = new Komoran(DEFAULT_MODEL.LIGHT); // 학습데이터 경량화 버전( 웹 서비스에 적합합니다. )
         //this.nlp = new Komoran(DEFAULT_MODEL.FULL); // 학습데이터 전체 버전(일괄처리 : 배치 서비스에 적합합니다.)
 
-        log.info("난 톰켓이 부팅되면서 스프링 프렝미워크가 자동 실행되었고, 스프링 실행될 때 nlp 변수에 Komoran 객체를 생성하여 저장하였다.");
+//        log.debug("난 톰켓이 부팅되면서 스프링 프렝미워크가 자동 실행되었고, 스프링 실행될 때 nlp 변수에 Komoran 객체를 생성하여 저장하였다.");
 
-        log.info(this.getClass().getName() + ".WordAnalysisService creator End !");
+        log.debug(this.getClass().getName() + ".WordAnalysisService creator End !");
 
 
     }
 
     public List<String> doWordNouns(String text) {
-        log.info(this.getClass().getName() + ".doWordAnalysis Start !");
-        log.info("분석할 문장 : " + text);
+        log.debug(this.getClass().getName() + ".doWordAnalysis Start !");
+        log.debug("분석할 문장 : " + text);
 
         //분석할 문장에 대해 정제(쓸데없는 특수문자 제거)
         String replace_text = text.replace("[^가-힣a-zA-Z0-9", " ");
@@ -54,7 +54,7 @@ public class WordAnalysisService {
         //형태소 분석 결과 중 명사만 가져오기
         List<String> rList = analyzeResultList.getNouns();
 
-        log.info("nouns : {}",rList);
+        log.debug("nouns : {}",rList);
 
         if (rList == null) { rList = new ArrayList<String>();}
         return rList;

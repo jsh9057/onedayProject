@@ -14,6 +14,9 @@ java {
 }
 
 configurations {
+	all {		// springboot 기본 logging logback 제외, log4j2 사용위해
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+	}
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
@@ -44,6 +47,18 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	// log4j2
+	implementation("org.springframework.boot:spring-boot-starter-log4j2")
+
+	// actuator
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	// mail
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+	///
+	implementation 'com.google.code.gson:gson:2.8.6'
 }
 
 tasks.named('test') {
